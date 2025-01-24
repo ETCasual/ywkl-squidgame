@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: digital-7;
+  src: url("/digital-7.ttf");
+}
+
+main {
+  z-index: 20;
+  display: flex;
+  --s: 182px; /* size  */
+  --m: 5px; /* margin */
+  --f: calc(var(--s) * 1.732 + 4 * var(--m) - 1px);
+}
+
+.grid-container {
+  font-size: 0; /* disable white space between inline block element */
+}
+
+.grid-container div.div-grid {
+  width: var(--s);
+  margin: var(--m);
+  height: calc(var(--s) * 1.1547);
+  display: inline-block;
+  font-size: initial;
+  clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+  margin-bottom: calc(var(--m) - var(--s) * 0.2885);
+  /* background-color: #fff; */
+}
+
+.grid-container div.div-grid2 {
+  width: calc(var(--s) - 10px);
+  margin: var(--m);
+  height: calc(calc(var(--s) - 9px) * 1.1547);
+  display: inline-block;
+  font-size: initial;
+  clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+  margin-bottom: calc(var(--m) - var(--s) * 0.2885);
+  /* background-color: #fff; */
+}
+
+.grid-container::before {
+  content: "";
+  width: calc(var(--s) / 2 + var(--m));
+  float: left;
+  height: 100%;
+  shape-outside: repeating-linear-gradient(
+    #0000 0 calc(var(--f) - 3px),
+    #000 0 var(--f)
+  );
+}
+
+* {
+  user-select: none;
+}
