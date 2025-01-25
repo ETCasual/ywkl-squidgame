@@ -13,6 +13,8 @@ export default function SubmitForm() {
   const [lastUpdatedNumber, setLastUpdatedNumber] = useState<number | null>(
     null,
   );
+  const [resetNumber, setResetNumber] = useState("");
+  const [isResettingNumber, setIsResettingNumber] = useState(false);
 
   // Create preview URL when file changes
   useEffect(() => {
@@ -89,6 +91,37 @@ export default function SubmitForm() {
     }
   };
 
+  const handleResetNumber = async () => {
+    if (!resetNumber) {
+      alert("Please enter a number to reset");
+      return;
+    }
+
+    setIsResettingNumber(true);
+    try {
+      const response = await fetch("/api/resetNumber", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ number: parseInt(resetNumber) }),
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`Successfully reset number ${resetNumber}`);
+        setResetNumber("");
+      } else {
+        alert("Error resetting number");
+      }
+    } catch (error) {
+      console.error("Reset number error:", error);
+      alert("Error resetting number");
+    } finally {
+      setIsResettingNumber(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-md rounded-lg bg-gray-800 p-6 shadow-xl">
@@ -105,7 +138,7 @@ export default function SubmitForm() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 px-2 py-1 text-white shadow-sm focus-within:outline-none focus:border-indigo-500 focus:ring-indigo-500"
               required
             />
           </div>
@@ -118,7 +151,7 @@ export default function SubmitForm() {
               type="number"
               value={number}
               onChange={(e) => setNumber(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 px-2 py-1 text-white shadow-sm focus-within:outline-none focus:border-indigo-500 focus:ring-indigo-500"
               required
             />
           </div>
@@ -172,6 +205,63 @@ export default function SubmitForm() {
               />
             </div>
           )}
+
+          <div className="mt-6 rounded-lg bg-yellow-900/20 p-3">
+            <label className="flex items-center gap-2 text-sm font-medium text-yellow-200">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-yellow-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Reset Specific Number
+            </label>
+            <div className="mt-2 flex gap-2">
+              <input
+                type="number"
+                value={resetNumber}
+                onChange={(e) => setResetNumber(e.target.value)}
+                placeholder="Enter number to reset"
+                className="block flex-1 rounded-md border-gray-600 bg-gray-700 px-2 py-1 text-white placeholder-gray-400 shadow-sm focus-within:outline-none focus:border-yellow-500 focus:ring-yellow-500"
+              />
+              <button
+                type="button"
+                onClick={handleResetNumber}
+                disabled={isResettingNumber}
+                className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white shadow-sm ${
+                  isResettingNumber
+                    ? "cursor-not-allowed bg-yellow-600 opacity-50"
+                    : "bg-yellow-600 hover:bg-yellow-700"
+                }`}
+              >
+                {isResettingNumber ? (
+                  "Resetting..."
+                ) : (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Reset
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
 
           <div className="flex gap-4">
             <button
